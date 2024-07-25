@@ -24,6 +24,7 @@ public class Lec01Import {
                 .setCar(car)
                 .build();
 
+
         log.info("{}", person);
 
     }
