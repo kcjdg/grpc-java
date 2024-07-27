@@ -1,6 +1,5 @@
 package me.kcj.test.sec06;
 
-import me.kcj.models.sec06.AccountBalance;
 import me.kcj.models.sec06.Money;
 import me.kcj.models.sec06.WithdrawRequest;
 import me.kcj.test.common.ResponseObserver;
@@ -19,7 +18,7 @@ public class Lec03ServerStreamingClientTest extends AbstractTest {
                 .setAccountNumber(2)
                 .setAmount(20)
                 .build();
-        var iterator = this.blockingStub.withdraw(request);
+        var iterator = this.bankBlockingStub.withdraw(request);
         int count = 0;
         while (iterator.hasNext()) {
             log.info("received money : {}", iterator.next());
@@ -36,7 +35,7 @@ public class Lec03ServerStreamingClientTest extends AbstractTest {
                 .build();
 
         var observer = ResponseObserver.<Money>create();
-        this.stub.withdraw(request, observer);
+        this.bankStub.withdraw(request, observer);
         observer.await();
         Assertions.assertEquals(2, observer.getItems().size());
         Assertions.assertEquals(10, observer.getItems().getFirst().getAmount());

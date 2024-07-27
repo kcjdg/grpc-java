@@ -1,7 +1,6 @@
 package me.kcj.test.sec06;
 
 import com.google.protobuf.Empty;
-import me.kcj.models.sec06.AccountBalance;
 import me.kcj.models.sec06.BalanceCheckRequest;
 import me.kcj.sec01.SimpleProtoDemo;
 import org.junit.jupiter.api.Assertions;
@@ -17,14 +16,14 @@ public class Lec01UnaryBlockingClient extends AbstractTest{
         var request = BalanceCheckRequest.newBuilder()
                 .setAccountNumber(1)
                 .build();
-        final var balance = this.blockingStub.getAccountBalance(request);
+        final var balance = this.bankBlockingStub.getAccountBalance(request);
         log.info("unary balance received: {}", balance);
         Assertions.assertEquals(100, balance.getBalance());
     }
 
     @Test
     public void allAccountTest(){
-        var allAccounts = this.blockingStub.getAllAccounts(Empty.getDefaultInstance());
+        var allAccounts = this.bankBlockingStub.getAllAccounts(Empty.getDefaultInstance());
         log.info("all accounts size : {}", allAccounts.getAccountsCount());
         Assertions.assertEquals(10, allAccounts.getAccountsCount());
 
