@@ -43,6 +43,8 @@ public class RequestValidator {
         var errorMessage = ErrorMessage.newBuilder()
                 .setValidationCode(code).build();
         metadata.put(ERROR_MESSAGE_KEY, errorMessage);
+        var key = Metadata.Key.of("desc", Metadata.ASCII_STRING_MARSHALLER);
+        metadata.put(key, code.toString());
         return metadata;
     }
 
