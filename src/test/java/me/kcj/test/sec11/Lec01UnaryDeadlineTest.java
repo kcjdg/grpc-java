@@ -34,7 +34,7 @@ public class Lec01UnaryDeadlineTest extends AbstractTest {
 
 
     @Test
-    public void asyncInputValidationTest() {
+    public void asyncDeadlineTest() {
         var request =BalanceCheckRequest.newBuilder()
                 .setAccountNumber(1)
                 .build();
