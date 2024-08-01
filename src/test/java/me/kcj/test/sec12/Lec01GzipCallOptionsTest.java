@@ -15,7 +15,10 @@ public class Lec01GzipCallOptionsTest extends AbstractTest{
         final var request = BalanceCheckRequest.newBuilder()
                 .setAccountNumber(1)
                 .build();
-        var response = this.bankBlockingStub.getAccountBalance(request);
+        var response = this.bankBlockingStub
+                .withCompression("gzip")
+                .getAccountBalance(request);
+
         log.info("{}", response);
 
     }
