@@ -3,6 +3,7 @@ package me.kcj.sec12;
 import com.google.common.util.concurrent.Uninterruptibles;
 import io.grpc.Context;
 import io.grpc.Status;
+import io.grpc.stub.ServerCallStreamObserver;
 import io.grpc.stub.StreamObserver;
 import me.kcj.models.sec12.*;
 import me.kcj.sec12.repository.AccountRepository;
@@ -23,6 +24,8 @@ public class BankService extends BankServiceGrpc.BankServiceImplBase {
                 .setAccountNumber(accountNumber)
                 .setBalance(balance)
                 .build();
+
+        ((ServerCallStreamObserver<AccountBalance>)responseObserver).setCompression("gzip");
         responseObserver.onNext(accountBalance);
         responseObserver.onCompleted();
     }
