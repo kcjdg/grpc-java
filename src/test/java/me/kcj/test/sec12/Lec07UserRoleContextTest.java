@@ -9,8 +9,11 @@ import me.kcj.models.sec12.Money;
 import me.kcj.models.sec12.WithdrawRequest;
 import me.kcj.sec12.BankService;
 import me.kcj.sec12.Constants;
-import me.kcj.test.common.ResponseObserver;
+import me.kcj.sec12.UserRoleBankService;
+import me.kcj.sec12.interceptors.UserRoleInterceptor;
 import me.kcj.sec12.interceptors.UserTokenInterceptor;
+import me.kcj.test.common.ResponseObserver;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,8 +22,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Executor;
 
-public class Lec06UserSessionTokenInterceptorTest extends AbstractInterceptorTest {
-    private static final Logger log = LoggerFactory.getLogger(Lec06UserSessionTokenInterceptorTest.class);
+public class Lec07UserRoleContextTest extends AbstractInterceptorTest{
+    private static final Logger log = LoggerFactory.getLogger(Lec07UserRoleContextTest.class);
 
 
     @Override
@@ -32,8 +35,8 @@ public class Lec06UserSessionTokenInterceptorTest extends AbstractInterceptorTes
     @Override
     protected GrpcServer createServer() {
         return GrpcServer.create(6565, serverBuilder -> {
-            serverBuilder.addService(new BankService())
-                    .intercept(new UserTokenInterceptor());
+            serverBuilder.addService(new UserRoleBankService())
+                    .intercept(new UserRoleInterceptor());
         });
     }
 
@@ -43,11 +46,11 @@ public class Lec06UserSessionTokenInterceptorTest extends AbstractInterceptorTes
         return metadata;
     }
 
-    @Test
+    @RepeatedTest(5)
     public void unaryUserCredentialsDemo() {
-        for (int i = 1; i <= 5; i++) {
+        for (int i = 1; i < 5; i++) {
             var request = BalanceCheckRequest.newBuilder()
-                    .setAccountNumber(1)
+                    .setAccountNumber(i)
                     .build();
             var response = this.bankBlockingStub
                     .withCallCredentials(new UserSessionToken("user-token-"+ i))
@@ -56,20 +59,7 @@ public class Lec06UserSessionTokenInterceptorTest extends AbstractInterceptorTes
         }
     }
 
-    @Test
-    public void streamingUserCredentialsDemo() {
-        for (int i = 1; i <= 5; i++) {
-            var observer = ResponseObserver.<Money>create();
-            var request = WithdrawRequest.newBuilder()
-                    .setAccountNumber(i)
-                    .setAmount(30)
-                    .build();
-            this.bankStub
-                    .withCallCredentials(new UserSessionToken("user-token-"+ i))
-                    .withdraw(request, observer);
-            observer.await();
-        }
-    }
+
 
     private static class UserSessionToken extends CallCredentials {
 
@@ -90,6 +80,6 @@ public class Lec06UserSessionTokenInterceptorTest extends AbstractInterceptorTes
                 metadata.put(Constants.USER_TOKEN_KEY, TOKEN_FORMAT.formatted(Constants.BEARER, jwt));
                 metadataApplier.apply(metadata);
             });
-            }
         }
     }
+}

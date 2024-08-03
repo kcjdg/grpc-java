@@ -1,4 +1,4 @@
-package me.kcj.test.sec12.interceptors;
+package me.kcj.sec12.interceptors;
 
 import io.grpc.*;
 import me.kcj.sec12.Constants;
