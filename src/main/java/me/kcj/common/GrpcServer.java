@@ -1,12 +1,14 @@
 package me.kcj.common;
 
 import io.grpc.*;
+import me.kcj.sec12.interceptors.GzipResponseInterceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 public class GrpcServer {
 
@@ -25,12 +27,14 @@ public class GrpcServer {
 
 
     public static GrpcServer create(int port, BindableService... services) {
-        var builder = ServerBuilder.forPort(port)
-//                .keepAliveTime(10, TimeUnit.SECONDS)
-//                .keepAliveTimeout(1, TimeUnit.SECONDS)
-//                .maxConnectionIdle(25, TimeUnit.SECONDS)
-                ;
-        Arrays.asList(services).forEach(builder::addService);
+        return create(port, serverBuilder -> {
+            Arrays.asList(services).forEach(serverBuilder::addService);
+        });
+    }
+
+    public static GrpcServer create(int port, Consumer<ServerBuilder<?>> consumer) {
+        var builder = ServerBuilder.forPort(port);
+        consumer.accept(builder);
         return new GrpcServer(builder.build());
     }
 
